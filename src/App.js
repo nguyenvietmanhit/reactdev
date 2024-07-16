@@ -21,6 +21,17 @@ export default function Board() {
 
         // Parent component pass props to child component
         // Parent component handle state
+
+        // Now that your state handling is in the Board component,
+        // the parent Board component passes props to the child Square components so that they can be displayed correctly.
+        // When clicking on a Square, the child Square component now asks the parent Board component to update the state of the board.
+        // When the Board’s state changes, both the Board component and every child Square re-renders automatically.
+        // Keeping the state of all squares in the Board component will allow it to determine the winner in the future.
+
+        // For convention, use onSomething for props represent events and handleSomething for handle those events
+
+        // Immutability make complex features to easier implement, ex undo / redo function, should mutate state directly
+        //, make to compare data change or not easier for performance reasons
     }
 
     return (
