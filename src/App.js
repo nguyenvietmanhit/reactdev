@@ -1,3 +1,5 @@
+import {useState} from "react";
+
 function ProductCategoryRow({category}) {
     return (
         <tr>
@@ -18,11 +20,19 @@ function ProductRow({product}) {
     )
 }
 
-function ProductTable({products}) {
+function ProductTable({products, filterText, inStockOnly}) {
     const rows = [];
     let lastCategory = null;
 
     products.forEach((product) => {
+        if (product.name.toLowerCase().indexOf(
+            filterText.toLowerCase()
+        ) === -1) {
+            return;
+        }
+        if (inStockOnly && !product.stocked) {
+            return;
+        }
         if (product.category !== lastCategory) {
             rows.push(
                 <ProductCategoryRow
@@ -53,13 +63,22 @@ function ProductTable({products}) {
     )
 }
 
-function SearchBar() {
+function SearchBar({filterText, inStockOnly, onFilterTextChange, onInStockOnlyChange}) {
     return (
         <form>
-            <input type="text" placeholder="Search..." />
-            <br />
+            <input
+                type="text"
+                placeholder="Search..."
+                value={filterText}
+                onChange={(e) => onFilterTextChange(e.target.value)}
+            />
+            <br/>
             <label>
-                <input type="checkbox"/>
+                <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={(e) => onInStockOnlyChange(e.target.checked)}
+                />
                 {' '}
                 Only show products in stock
             </label>
@@ -67,11 +86,23 @@ function SearchBar() {
     )
 }
 
-function FilterableProductTable({ products }) {
+function FilterableProductTable({products}) {
+    const [filterText, setFilterText] = useState('fruit');
+    const [inStockOnly, setInStockOnly] = useState(false);
+
     return (
         <div>
-            <SearchBar />
-            <ProductTable products={products} />
+            <SearchBar
+                filterText={filterText}
+                inStockOnly={inStockOnly}
+                onFilterTextChange={setFilterText}
+                onInStockOnlyChange={setInStockOnly}
+            />
+            <ProductTable
+                products={products}
+                filterText={filterText}
+                inStockOnly={inStockOnly}
+            />
         </div>
     )
 }
@@ -86,7 +117,7 @@ const PRODUCTS = [
 ]
 
 export default function App() {
-    return <FilterableProductTable products={PRODUCTS} />
+    return <FilterableProductTable products={PRODUCTS}/>
 }
 
 // Which of these are state? Identify the ones that are not:
